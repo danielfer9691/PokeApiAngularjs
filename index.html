@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="app.js"></script>
+</head>
+
+<body ng-app="todoApp" ng-controller="BusquedaListController as ctrl">
+    <div class="container">
+        <div class="row">
+            <div class="card col-md-6">
+                <div class="card-header">
+                    <div class="col-md-12">
+                        <label>Filtrar</label>
+                        <input class="form-control" list="nombrePokemon" name="filterName" id="filterName" ng-model="filterName"
+                            ng-change="filtroNombre(filterName)">
+                        <p ng-if="noExistePokemon">No Existe Pokemon</p>
+
+                        <datalist ng-repeat="nombre in ctrl.dataPokemon.results" id="nombrePokemon">
+                            <option value="{{nombre.name}}"></option>
+                        </datalist>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4"></div>
+                        <div class="col-md-8">
+                            <table>
+                                <tbody>
+                                    <tr ng-repeat="pokemon in ctrl.dataPokemon.results">
+                                        <td><input type="button" class="form-control"
+                                                ng-click="verPokemon(pokemon.name)" ng-value="pokemon.name">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button ng-disabled="ctrl.dataPokemon.previous==null"
+                                ng-click="actualizacionLista(ctrl.dataPokemon.previous)" class="form-control">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-left">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M15 6l-6 6l6 6" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button ng-disabled="ctrl.dataPokemon.next==null" class="form-control"
+                                ng-click="actualizacionLista(ctrl.dataPokemon.next)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M9 6l6 6l-6 6" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card col-md-6" ng-if="isVisibleDetalle">
+                <div class="card-header">
+                    <p style="font-weight: bold;text-align: center;">{{pokemonSeleccionado}}</p>
+                    <p style="margin-bottom: 1px;text-align: center;">Nº{{ctrl.detallePokemon.id}}</p>
+                </div>
+                <div class="row" style="margin-top: 25px;">
+                    <div class="col-md-12">
+                        <img src="{{ctrl.detallePokemon.sprites.other.dream_world.front_default}}" width="100%"
+                            height="250px" alt="">
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label style="font-weight: bold;">Tipo</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p
+                                            style="background-color: #69D1c5; text-align: center; padding: 1px; border-radius: 25px;">
+                                            {{ctrl.detallePokemon.types[0].type.name}}</p>
+                                    </div>
+                                    <div class="col-md-6" ng-if="ctrl.detallePokemon.types[1]!==undefined">
+                                        <p
+                                            style="background-color: #33658a; color: white;text-align: center; padding: 1px; border-radius: 25px;">
+                                            {{ctrl.detallePokemon.types[1].type.name}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label style="font-weight: bold;">Habilidades</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p
+                                            style="background-color: #69D1c5; text-align: center; padding: 1px; border-radius: 25px;">
+                                            {{ctrl.detallePokemon.abilities[0].ability.name}}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p ng-if="ctrl.detallePokemon.abilities[1]!==undefined"
+                                            style="background-color: #33658a; color: white; text-align: center; padding: 1px; border-radius: 25px;">
+                                            {{ctrl.detallePokemon.abilities[1].ability.name}}</p>
+                                    </div>
+                                    <div class="col-md-12" ng-if="ctrl.detallePokemon.abilities[2]!==undefined">
+                                        <p
+                                            style="background-color: #2f4858; color: white; text-align: center; padding: 1px; border-radius: 25px;">
+                                            {{ctrl.detallePokemon.abilities[2].ability.name}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label style="font-weight: bold;">Peso</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label style="font-weight: bold;">Altura</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p
+                                            style="background-color: #69D1c5; text-align: center; padding: 1px; border-radius: 25px;">
+                                            {{ctrl.detallePokemon.weight}}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p
+                                            style="background-color: #33658a; color: white; text-align: center; padding: 1px; border-radius: 25px;">
+                                            {{ctrl.detallePokemon.height}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 25px;">
+                    <div class="col-md-5">
+                        <div class="table-wrapper col-md-12">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Games</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="games in ctrl.detallePokemon.game_indices">
+                                        <td>{{games.version.name}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="col-md-12">
+                            <label style="font-weight: bold;">Stats</label>
+                        </div>
+                        <div class="row">
+                            <div ng-repeat="stats in ctrl.detallePokemon.stats">
+                                <div class="col-md-12">
+                                    <label style="font-weight: bold;">{{stats.stat.name}}</label>
+                                    <p
+                                        style="background-color: #69D1c5; text-align: center; padding: 1px; border-radius: 25px;margin: 2px;">
+                                        {{stats.base_stat}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 50px;">
+            <div class="card col-md-12">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;margin: 2px;" ng-repeat="abc in abc">
+                                <p style="font-weight: bold;">{{abc.tipo}}</p>
+                                <p style="background-color: #243742;color: white; border-radius: 25px;">{{abc.cantidad}}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
